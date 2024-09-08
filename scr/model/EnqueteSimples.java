@@ -6,64 +6,47 @@ import java.util.List;
 public class EnqueteSimples {
     private List<String> opcoes;
     private List<EnqueteListener> listeners;
+    private List<Integer> votos = new ArrayList<>();
 
     public EnqueteSimples(){
         this.opcoes = new ArrayList<>();
         this.listeners = new ArrayList<>();
     }
 
-    public String[] getOpcoes(){
-        return opcoes.toArray(new String[0]);
+    public List<String> getOpcoes(){
+        return opcoes;
     }
 
-    public int getTotalVotos() {
-        int totalVotos = 0;
-        for (EnqueteListener listener : listeners) {
-            totalVotos += listener.getVotos();
-        }
-        return totalVotos;
-    }
-
-    public int getVotos(String opcao) {
-        int votos = 0;
-        for (EnqueteListener listener : listeners) {
-            votos += listener.getVotos(opcao);
-        }
+    public List<Integer> getVotos() {
         return votos;
     }
+
     public void addEnqueteListener(EnqueteListener listener) {
         listeners.add(listener);
-        listener.estadoModificado(); 
     }
 
     public void addOpcao(String opcao) {
         opcoes.add(opcao);
-        disparaNovaOpcao(opcao);
+        votos.add(0);
+        disparaNovaOpcao();
     }
 
-    public void disparaNovoVoto(String opcao) {
+    public void disparaNovoVoto() {
         for (EnqueteListener listener : listeners) {
-            listener.novoVoto(opcao);
+            listener.novoVoto();
         }
     }
 
-    public void disparaNovaOpcao(String opcao) {
+    public void disparaNovaOpcao() {
         for (EnqueteListener listener : listeners) {
-            listener.novaOpcao(opcao);
-            listener.estadoModificado(); 
+            listener.novaOpcao();
         }
     }
 
-    public void votar(String opcao) {
-        disparaNovoVoto(opcao);
+    public void votar(int opcao) {
+        int indice = opcao - 1;
+        votos.set(indice,  votos.get(opcao)+1);
+        disparaNovoVoto();
     }
 
-}
-
-interface EnqueteListener {
-    void novoVoto(String opcao);
-    void novaOpcao(String opcao);
-    void estadoModificado();
-    int getVotos();
-    int getVotos(String opcao);
 }
